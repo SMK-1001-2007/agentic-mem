@@ -34,7 +34,6 @@ async def extract_rule(text: str) -> dict:
         "expiresAt": expiration
     }
 
-# CLI command - remember
 # Generate embedding for storage in Vector DB
 async def generate_embedding(text: str) -> list:
     result = genai.embed_content(
@@ -44,7 +43,6 @@ async def generate_embedding(text: str) -> list:
     )
     return result['embedding']
 
-# CLI command - ask
 # Fetch relevant data from Vector DB and generate response
 async def synthesize_answer(question: str, context_rules: list[str]) -> str:
     model = genai.GenerativeModel("gemini-3.8-flash")
@@ -67,6 +65,7 @@ class ConflictDetection(BaseModel):
     explanation: str
     conflicting_rules: list[str]
 
+# Detect conflicts between to be inserted and existing set of rules
 async def detect_conflict(new_rule: str, existing_rules: list[str]) -> dict:
     if not existing_rules:
         return {"has_conflict": False}

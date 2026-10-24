@@ -11,7 +11,7 @@ from .file_manager import append_rule_to_file, remove_rule_from_file
 SERVER_URL = os.getenv("SERVER_URL")
 WS_URL = os.getenv("WS_URL")
 
-
+# CLI command - remember
 def send_memory(text: str):
     print("Evaluating rule...")
     try:
@@ -24,7 +24,7 @@ def send_memory(text: str):
             print("\nConflicting Existing Rules:")
             for rule in data.get("conflicting_rules", []):
                 print(f"  - {rule}")
-            print("\nPlease use a delete command to remove the old rule before inserting this one.\n")
+            print("\nPlease use forget command to remove the old rule before inserting this one.\n")
             
         elif data.get("type") == "error":
             print(f"\nError: {data.get('status')}\n")
@@ -35,7 +35,7 @@ def send_memory(text: str):
     except Exception as e:
         print(f"\nError connecting to server: {e}\n")
 
-
+# CLI command - sync
 async def listen_for_updates():
     print(f"Connecting to live memory stream at {WS_URL}...")
     try:
@@ -48,7 +48,6 @@ async def listen_for_updates():
                     append_rule_to_file(rule)
                     print(f"\nSynced new rule: {rule}")
                     
-                # Add this block to intercept deletions
                 elif message.startswith("DELETE_RULE:"):
                     rule = message.split("DELETE_RULE:", 1)[1]
                     remove_rule_from_file(rule)
@@ -59,6 +58,7 @@ async def listen_for_updates():
     except Exception as e:
         print(f"WebSocket error: {e}")
 
+# CLI command - ask
 def ask_question(question: str) -> str:
     print("Searching project memory...")
     try:
@@ -68,6 +68,7 @@ def ask_question(question: str) -> str:
     except Exception as e:
         return f"Error connecting to server: {e}"
 
+# CLI command - forget
 def forget_rule(content: str):
     print("Executing deletion...")
     try:
